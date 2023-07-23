@@ -1,73 +1,36 @@
 import Head from 'next/head';
-import {useState} from 'react';
-import {replies} from '../data.js'
+import { useState } from 'react';
+import { reports } from '../data.js';
+import Header from '../components/Header';
+import CreateForm from '../components/CreateForm';
+import ReportTable from '../components/ReportTable';
+import Footer from '../components/Footer';
 
-export default function Home() {
-
-  const [question, setQuestion] = useState("Ask me anything ...")
-  const [answer, setAnswer] = useState("Answer ...")
-
-  function questionHandler(event){
-    event.preventDefault();
-    setQuestion(event.target.question.value)
-    const randomReply = replies[Math.floor(Math.random() * replies.length)];
-    setAnswer(randomReply)
-
-    
-  }  
+export default function CookieStandAdmin() {
+  const [cookieReports, setCookieReports] = useState(reports);
 
   return (
     <>
       <Head>
         <title>Cookie Stand Admin</title>
       </Head>
-      <body>
-        {/* Header */}
-        <Header />
 
+      <Header />
 
-        <main className='flex flex-col items-center py-4 space-y-8'>
-          {/* form */}
-          <Form handler={questionHandler}/>
+      <main className="p-4">
+        <CreateForm onCookieReportCreate={handleCookieReportCreate} />
+        {cookieReports.length === 0 ? (
+          <h2 className="text-center text-2xl mt-8">No Cookie Stands Available</h2>
+        ) : (
+          <ReportTable reports={cookieReports} />
+        )}
+      </main>
 
-          {/* question section */}
-          <Question question={question}/>
-
-          <p className="text-4xl text-center">{answer}</p>
-
-        </main>
-        <footer className="p-4 mt-8 bg-gray-500 text-gray-50">
-          &copy; rami ghanem
-        </footer>
-      </body>
+      <Footer reports={cookieReports} />
     </>
-  )
-}
+  );
 
-function Header() {
-  return (
-    <header className='flex items-center justify-between p-4 bg-gray-500 text-gray-50'>
-      <h1 className='text-4xl'>Expert 8 balls</h1>
-      <p>Cookie Header</p>
-    </header>
-  )
-}
-
-function Form(props) {
-  return (
-    <form className="flex w-1/2 p-2 mx-auto my-4 bg-gray-200" onSubmit={props.handler}>
-      <input name="question" className="flex-auto pl-1" />
-      <button className="px-2 py-1 bg-gray-500 text-gray-50">Ask</button>
-    </form>
-  )
-}
-
-function Question(props) {
-  return (
-    <div className="mx-auto my-4 bg-gray-900 rounded-full w-96 h-96">
-      <div className="relative flex items-center justify-center w-48 h-48 rounded-full bg-gray-50 top-16 left-16">
-        <p className="text-xl text-center">{props.question}</p>
-      </div>
-    </div>
-  )
+  function handleCookieReportCreate(newReport) {
+    setCookieReports([...cookieReports, newReport]);
+  }
 }
